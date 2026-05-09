@@ -3,6 +3,8 @@ package com.turkcell.ticketapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.data.network.ApiException
+import com.turkcell.data.network.NetworkException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +40,19 @@ class LoginViewModel(
         viewModelScope.launch {
             authRepository.login(current.email, current.password)
                 .onSuccess { _state.update { it.copy(isLoading = false, isLoggedIn = true) } }
-                .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.message) } }
+                .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.toUserMessage()) } }
         }
     }
+}
+
+// Ömürlük
+internal fun Throwable.toUserMessage(): String = when(this)
+{
+    is ApiException -> when(code) {
+        401 -> "Email veya şifre hatalı"
+        in 500..599 -> "Sunucu şu anda cevap veremiyor"
+        else -> "Beklenmeyen bir hata oluştu"
+    }
+    is NetworkException -> "İnternet bağlantısı yok"
+    else -> message ?: "Bilinmeyen bir hata oluştu."
 }
