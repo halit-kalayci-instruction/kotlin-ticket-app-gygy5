@@ -2,6 +2,7 @@ package com.turkcell.data.di
 
 import com.turkcell.core.domain.AuthRepository
 import com.turkcell.data.local.TokenStore
+import com.turkcell.data.network.AuthInterceptor
 import com.turkcell.data.remote.AuthApi
 import com.turkcell.data.repository.AuthRepositoryImpl
 import kotlinx.serialization.json.Json
@@ -39,9 +40,12 @@ val dataModule = module {
         TokenStore(context=get())
     }
 
+    single { AuthInterceptor(tokenStore = get()) }
+
     // HTTP isteklerini yönetmek..
     single {
         OkHttpClient.Builder()
+            .addInterceptor(get<AuthInterceptor>())
             .addInterceptor(get<HttpLoggingInterceptor>())
             .build()
     }
