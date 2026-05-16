@@ -4,6 +4,7 @@ import com.turkcell.data.local.TokenStore
 import okhttp3.Interceptor
 import okhttp3.Response
 
+// Var olan jwt'i api'e giden isteklere ekle..
 class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor
 {
     private val authPaths = setOf(
