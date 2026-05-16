@@ -1,6 +1,7 @@
 package com.turkcell.data.di
 
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.data.local.TokenStore
 import com.turkcell.data.remote.AuthApi
 import com.turkcell.data.repository.AuthRepositoryImpl
 import kotlinx.serialization.json.Json
@@ -34,6 +35,10 @@ val dataModule = module {
         }
     }
 
+    single {
+        TokenStore(context=get())
+    }
+
     // HTTP isteklerini yönetmek..
     single {
         OkHttpClient.Builder()
@@ -53,7 +58,8 @@ val dataModule = module {
 
     single<AuthRepository> {
         AuthRepositoryImpl(
-            authApi = get()
+            authApi = get(),
+            tokenStore = get()
         )
     }
 
