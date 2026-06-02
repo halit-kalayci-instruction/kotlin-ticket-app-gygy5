@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.turkcell.core.domain.auth.AuthRepository
 import com.turkcell.ticketapp.screen.HomeScreen
 import com.turkcell.ticketapp.screen.LoginScreen
+import com.turkcell.ticketapp.screen.StaffScreen
 import org.koin.compose.koinInject
 
 
@@ -46,7 +47,7 @@ private fun SplashScreen(){
 private fun AuthedNavHost(navController: NavHostController){
     NavHost(navController=navController, startDestination = Home){
         composable<Home> {
-            HomeScreen()
+            StaffScreen() // Derste hızlı olması için böyle yapıldı, role göre düzenlenmeli..
         }
     }
 }

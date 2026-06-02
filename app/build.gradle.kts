@@ -71,5 +71,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    // QR CODE
     implementation(libs.qrcode.kotlin)
+    implementation(libs.zxing.android.embedded)
 }
