@@ -2,6 +2,7 @@ package com.turkcell.ticketapp.screen
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,7 +30,7 @@ fun StaffScreen() {
         result ->
         val contents = result.contents
         if (contents == null) {
-            print("İşlem iptal edildi")
+            Log.d("StaffScreen","İşlem iptal edildi")
         }// işlemi iptal et
         else {
             // QR Okundu contents = qr
@@ -45,6 +46,7 @@ fun StaffScreen() {
             setBeepEnabled(true)
             setOrientationLocked(false)
             setBarcodeImageEnabled(false)
+            setTimeout(2000)
         }
         scanLauncher.launch(options)
     }
@@ -54,7 +56,7 @@ fun StaffScreen() {
     ) {
         granted ->
         if(granted) startCameraScan()
-        else print("İzin verilmedi..")
+        else Log.d("StaffScreen","İzin verilmedi..")
     }
 
     fun onScanClick() {
@@ -69,9 +71,10 @@ fun StaffScreen() {
         uri ->
         if(uri!=null)
         {
-            print("QR okundu: {uri}")
+            Log.d("StaffScreen","QR resmi okundu: ${uri}")
+
         }else{
-            print("QR Okunamadı.")
+            Log.d("StaffScreen","QR Okunamadı.")
         }
     }
 
