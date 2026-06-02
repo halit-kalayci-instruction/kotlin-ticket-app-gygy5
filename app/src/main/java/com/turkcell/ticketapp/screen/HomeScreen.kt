@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,6 +34,9 @@ import com.turkcell.core.ui.theme.Surface
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
+// UI Kodunda business içermemesi..
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
@@ -37,14 +44,30 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Surface (modifier= Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize().padding(vertical = 24.dp)) {
-            Text("Yaklaşan Etkinlikler")
-            Spacer(Modifier.height(8.dp))
-            EventsRow(isLoading = state.isEventsLoading, error=state.eventsError, events=state.events)
+        PullToRefreshBox(
+            isRefreshing = state.isEventsRefreshing,
+            onRefresh = viewModel::refreshEvents,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 24.dp)
+                    .verticalScroll(rememberScrollState()),
+
+            ) {
+                Text("Yaklaşan Etkinlikler")
+                Spacer(Modifier.height(8.dp))
 
 
-            Spacer(Modifier.height(8.dp))
-            Text("Satın Alınmış Biletler")
+                EventsRow(isLoading = state.isEventsLoading, error=state.eventsError, events=state.events)
+
+
+
+
+                Spacer(Modifier.height(8.dp))
+                Text("Satın Alınmış Biletler")
+            }
         }
     }
 }

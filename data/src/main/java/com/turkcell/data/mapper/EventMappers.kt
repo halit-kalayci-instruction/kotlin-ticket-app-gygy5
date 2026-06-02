@@ -23,3 +23,5 @@ internal fun TicketTypeDto.toDomain() : TicketType = TicketType(
     soldCount=soldCount,
     remaining=remaining
 )
+
+// Bilete tıklandığında detay sayfasına gidecek ve gelen detayları gösterecek yapı.

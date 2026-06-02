@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val isEventsLoading: Boolean = false,
+    val isEventsRefreshing: Boolean = false,
     val events: List<Event> = emptyList(),
     val eventsError: String? = null
 )
@@ -29,15 +30,28 @@ class HomeViewModel(private val eventRepository: EventRepository) : ViewModel() 
 
         _state.update { it.copy(isEventsLoading = true, eventsError = null) }
 
+        fetchEvents()
+    }
+
+    fun refreshEvents() {
+        if (_state.value.isEventsRefreshing) return
+
+        _state.update { it.copy(isEventsRefreshing = true, eventsError = null) }
+
+        fetchEvents()
+    }
+
+    private fun fetchEvents() {
         viewModelScope.launch {
             eventRepository.getEvents().fold(
                 onSuccess = {
-                    list -> _state.update { it.copy(events = list, isEventsLoading = false, eventsError = null)}
+                        list -> _state.update { it.copy(events = list, isEventsLoading = false, eventsError = null)}
                 },
                 onFailure = {
-                    e -> _state.update { it.copy(isEventsLoading = false, eventsError = e.message ?: "Etkinlikler yüklenemedi.") }
+                        e -> _state.update { it.copy(isEventsLoading = false, eventsError = e.message ?: "Etkinlikler yüklenemedi.") }
                 }
             )
         }
     }
+
 }
