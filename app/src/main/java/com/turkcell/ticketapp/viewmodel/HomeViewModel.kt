@@ -45,10 +45,10 @@ class HomeViewModel(private val eventRepository: EventRepository) : ViewModel() 
         viewModelScope.launch {
             eventRepository.getEvents().fold(
                 onSuccess = {
-                        list -> _state.update { it.copy(events = list, isEventsLoading = false, eventsError = null)}
+                        list -> _state.update { it.copy(events = list, isEventsLoading = false, isEventsRefreshing = false, eventsError = null)}
                 },
                 onFailure = {
-                        e -> _state.update { it.copy(isEventsLoading = false, eventsError = e.message ?: "Etkinlikler yüklenemedi.") }
+                        e -> _state.update { it.copy(isEventsLoading = false, isEventsRefreshing = false,  eventsError = e.message ?: "Etkinlikler yüklenemedi.") }
                 }
             )
         }

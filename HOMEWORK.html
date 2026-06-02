@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ödev: Bilet Alma Akışını Uçtan Uca Tamamla</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #1f2328;
+    margin: 0;
+  }
+  h1 {
+    font-size: 22pt;
+    margin: 0 0 4pt 0;
+    color: #0b3d91;
+    border-bottom: 2px solid #0b3d91;
+    padding-bottom: 6pt;
+  }
+  h2 {
+    font-size: 14pt;
+    margin: 22pt 0 8pt 0;
+    color: #0b3d91;
+    border-bottom: 1px solid #d0d7de;
+    padding-bottom: 3pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 12pt;
+    margin: 14pt 0 6pt 0;
+    color: #24292f;
+    page-break-after: avoid;
+  }
+  p { margin: 6pt 0; }
+  ul, ol { margin: 6pt 0 6pt 18pt; padding: 0; }
+  li { margin: 3pt 0; }
+  code {
+    font-family: "Consolas", "Courier New", monospace;
+    background: #f3f4f6;
+    padding: 1pt 4pt;
+    border-radius: 3pt;
+    font-size: 9.5pt;
+    color: #82071e;
+  }
+  .badge {
+    display: inline-block;
+    background: #ddf4ff;
+    color: #0969da;
+    padding: 1pt 6pt;
+    border-radius: 10pt;
+    font-size: 9pt;
+    font-weight: 600;
+  }
+  .intro {
+    background: #f6f8fa;
+    border-left: 4px solid #0b3d91;
+    padding: 10pt 12pt;
+    margin: 12pt 0 18pt 0;
+    border-radius: 0 4pt 4pt 0;
+  }
+  .goal {
+    background: #fff8c5;
+    border-left: 4px solid #d4a72c;
+    padding: 8pt 12pt;
+    margin: 8pt 0;
+    border-radius: 0 4pt 4pt 0;
+    font-weight: 600;
+  }
+  .flow {
+    background: #eef6ff;
+    border: 1px solid #c6e0ff;
+    padding: 8pt 12pt;
+    border-radius: 4pt;
+    font-family: "Consolas", monospace;
+    font-size: 10pt;
+    margin: 8pt 0;
+  }
+  .checklist {
+    background: #f6f8fa;
+    border-radius: 4pt;
+    padding: 10pt 14pt;
+  }
+  .checklist li { list-style: none; position: relative; padding-left: 18pt; }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    color: #57606a;
+    font-size: 12pt;
+  }
+  .stretch {
+    background: #fbefff;
+    border-left: 4px solid #8250df;
+    padding: 8pt 12pt;
+    border-radius: 0 4pt 4pt 0;
+    margin: 8pt 0;
+  }
+  .meta {
+    color: #57606a;
+    font-size: 9.5pt;
+    margin-top: 2pt;
+  }
+  .estimate {
+    margin-top: 14pt;
+    padding: 8pt 12pt;
+    background: #dafbe1;
+    border-left: 4px solid #1a7f37;
+    border-radius: 0 4pt 4pt 0;
+    font-weight: 600;
+  }
+  .step-num {
+    display: inline-block;
+    background: #0b3d91;
+    color: white;
+    width: 22pt;
+    height: 22pt;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22pt;
+    font-weight: 700;
+    margin-right: 6pt;
+    font-size: 10pt;
+  }
+</style>
+</head>
+<body>
+
+<h1>Ödev: Bilet Alma Akışını Uçtan Uca Tamamla</h1>
+<div class="meta">TicketApp · Orta seviye · Android (Kotlin + Compose) · 2026-05-23</div>
+
+<div class="goal">
+  Hedef: Bir USER giriş yaptıktan sonra etkinliği seçip bilet alabilsin ve QR'ını görebilsin.
+</div>
+
+<div class="intro">
+  <strong>Tamamlanacak API akışı</strong> (referans: <code>API.MD</code>):
+  <div class="flow">
+    GET /events &nbsp;→&nbsp; GET /events/{id} &nbsp;→&nbsp; POST /purchases &nbsp;→&nbsp;
+    POST /purchases/{id}/pay &nbsp;→&nbsp; GET /me/tickets &nbsp;→&nbsp; GET /me/tickets/{id}
+  </div>
+  Mevcut mimariyi (3 modül: <code>app</code> / <code>core</code> / <code>data</code>, Koin, Retrofit, Result tabanlı repository) <strong>bozmadan</strong> ilerle.
+  Her yeni endpoint için aynı kalıbı uygula:
+  <br><strong>DTO → API interface → Mapper → Domain model → Repository (interface + impl) → ViewModel → Screen.</strong>
+</div>
+
+<h2><span class="step-num">1</span>Register Screen'i bitir </h2>
+<p><code>AppNavHost.kt:64</code> şu an <code>Text("Register Screen")</code> placeholder.</p>
+<ul>
+  <li><code>RegisterScreen</code> + <code>RegisterViewModel</code> yaz, mevcut <code>LoginScreen.kt</code> ve <code>LoginViewModel.kt</code> ile bire bir paralel olsun.</li>
+  <li><code>AuthRepository.register</code> zaten hazır; sadece kullan.</li>
+  <li><strong>Validation:</strong> email format + şifre 8–128 karakter (API kuralı).</li>
+  <li><strong>Hata mapping:</strong> <code>409 email_taken</code> → "Bu email zaten kayıtlı".</li>
+</ul>
+
+<h2><span class="step-num">2</span>Event Detay ekranı</h2>
+<ul>
+  <li><code>core/domain/event/EventRepository</code>'ye <code>getEvent(id: String): Result&lt;Event&gt;</code> ekle.</li>
+  <li><code>EventApi.kt</code>'a <code>@GET("/events/{id}")</code> ekle, <code>EventRepositoryImpl</code>'de kullan.</li>
+  <li>Yeni route: <code>@Serializable data class EventDetail(val id: String)</code> (<code>AppDestinations.kt</code>).</li>
+  <li><code>HomeScreen</code>'deki <code>EventCard</code> tıklanınca <code>EventDetail(event.id)</code>'ya navigate et.</li>
+  <li><strong>Detay ekranı içeriği:</strong> isim, açıklama, yer, tarih (mevcut <code>DateFormatter.kt</code> ile formatla), bilet türleri listesi (her satırda <code>name</code>, <code>remaining</code>/<code>capacity</code>, fiyat).
+      Her satırda <code>+/-</code> ile adet seçimi (0–min(20, remaining)).</li>
+  <li>Sayfa altında "Toplam: ₺X" + <strong>"Satın Al"</strong> butonu (<code>totalCents</code>'ı kuruştan TL'ye çevirip göster).</li>
+</ul>
+
+<h2><span class="step-num">3</span>Sat Alım + Ödeme akışı</h2>
+<p>Yeni katman: <code>core/domain/purchase/</code> ve <code>data/.../purchase/</code>.</p>
+<ul>
+  <li><strong>Domain:</strong> <code>Purchase</code>, <code>PurchaseItem</code>, <code>PurchaseStatus { PENDING, PAID }</code>, <code>Ticket</code>, <code>TicketStatus</code>.</li>
+  <li><strong>DTO'lar:</strong> <code>CreatePurchaseRequestDto</code>, <code>PurchaseItemRequestDto</code>, <code>PurchaseDto</code>, <code>PurchaseItemDto</code>, <code>TicketDto</code>.</li>
+  <li><strong>PurchaseApi:</strong>
+    <ul>
+      <li><code>@POST("/purchases")</code> createPurchase</li>
+      <li><code>@POST("/purchases/{id}/pay")</code> pay</li>
+      <li><code>@GET("/purchases/{id}")</code> getPurchase</li>
+    </ul>
+  </li>
+  <li><strong>PurchaseRepository</strong> (interface + impl + Koin'e <code>single</code> olarak ekle).</li>
+  <li><strong>ViewModel akışı:</strong>
+    <ol>
+      <li>Detay ekranındaki seçimlerle <code>createPurchase</code> → <code>purchase.id</code> al → "Ödeme Onayı" diyaloğu/ekranı.</li>
+      <li>Onayla → <code>pay(id)</code> → başarıdaysa <strong>Biletlerim</strong>'e navigate et.</li>
+    </ol>
+  </li>
+  <li><strong>Hata yönetimi:</strong>
+    <code>409 capacity_exceeded</code> → "Stok yetersiz, yenile" (etkinliği refresh et).
+    <code>409 already_paid</code>, <code>403 not_purchase_owner</code> için kullanıcıya anlaşılır mesaj.
+    <code>LoginViewModel.kt</code>'daki <code>toUserMessage</code> paternini ortak bir yere taşıyıp genişlet (ipucu: <code>core/util/ErrorMessages.kt</code>).
+  </li>
+</ul>
+
+<h2><span class="step-num">4</span>Biletlerim + QR ekranı</h2>
+<ul>
+  <li><strong>MeApi:</strong> <code>@GET("/me/tickets")</code> ve <code>@GET("/me/tickets/{id}")</code>.</li>
+  <li><strong>TicketRepository:</strong> <code>getMyTickets()</code>, <code>getTicket(id)</code>.</li>
+  <li><strong>MyTicketsScreen</strong> — bilet kartları (etkinlik adı, tarih, bilet türü, durum). Boş state + error state + pull-to-refresh.</li>
+  <li><strong>TicketDetailScreen</strong> — QR ekranı. <code>qrCode</code> UUID'sini QR'a çevir.
+    <ul>
+      <li><code>io.github.g0dkar:qrcode-kotlin</code> ya da <code>journeyapps:zxing-android-embedded</code> ekle. Sadece <code>qrCode</code> alanını payload olarak kullan (API.MD §5.4 notu).</li>
+      <li>Ekran açıkken <strong>ekran parlaklığını maksimuma</strong> çek (kapı görevlisi okuyabilsin).</li>
+    </ul>
+  </li>
+  <li>Home'a "Biletlerim" butonu veya bottom nav ekle.</li>
+</ul>
+
+<h2><span class="step-num">5</span>Logout + 401 davranışı</h2>
+<ul>
+  <li><code>HomeScreen</code>'e top bar koy, çıkış butonu → <code>authRepository.logout()</code>.
+  <code>AppNavHost</code> zaten <code>isLoggedIn</code> flow'unu izliyor, login'e otomatik düşer.</li>
+  <li>Refresh başarısız olduğunda <code>TokenAuthenticator.kt</code> tokenları temizliyor olmalı; doğrula. Değilse temizle ki kullanıcı login'e itilsin.</li>
+</ul>
+
+<h2>Teslim kriterleri</h2>
+<div class="checklist">
+  <ul>
+    <li>Yeni etkinlik açılır → bilet türü + adet seçilir → satın alma → ödeme → biletlerim listesinde görünür → QR ekranı render olur.</li>
+    <li>Stok azalan etkinlik refresh edilince <code>remaining</code> güncel gelir.</li>
+    <li>Tüm yeni ekranlarda <strong>Loading / Error / Empty / Content</strong> dört state.</li>
+    <li>Hiçbir Composable'da doğrudan <code>Api</code> / <code>Repository</code> çağrısı yok — her şey <code>ViewModel</code> üzerinden.</li>
+    <li>Yeni eklenen tüm Koin bağımlılıkları <code>DataModule.kt</code> ve <code>AppModule.kt</code>'a kayıtlı.</li>
+    <li>Kullanıcıya görünen string literal'ler <code>strings.xml</code>'e taşınmış.</li>
+  </ul>
+</div>
+
+<h2>Bonus (Eğer kolay geldiyse aşağıdakileri de yapmaya çalışabilirsin)</h2>
+<div class="stretch">
+  <ul>
+    <li><strong>"Satın Alımlarım" ekranı</strong> (<code>GET /me/purchases</code>) — PENDING olanları "Ödemeye devam et" ile <code>pay</code>'e bağla.</li>
+    <li><strong>STAFF rolü için CheckinScreen</strong> (kamera + <code>POST /checkin/scan</code>).</li>
+    <li>Ekran döndürmede / process death sonrası state korunsun (<code>SavedStateHandle</code>).</li>
+  </ul>
+</div>
+
+
+</body>
+</html>

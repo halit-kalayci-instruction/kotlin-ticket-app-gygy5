@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.turkcell.core.domain.event.Event
 import com.turkcell.core.ui.theme.Surface
+import com.turkcell.ticketapp.component.QrCodeImage
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -58,15 +59,15 @@ fun HomeScreen(
             ) {
                 Text("Yaklaşan Etkinlikler")
                 Spacer(Modifier.height(8.dp))
-
-
                 EventsRow(isLoading = state.isEventsLoading, error=state.eventsError, events=state.events)
-
-
-
-
                 Spacer(Modifier.height(8.dp))
                 Text("Satın Alınmış Biletler")
+                Spacer(Modifier.height(8.dp))
+                Text("Örnek QR")
+                QrCodeImage(
+                    content = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                )
+                Text("3fa85f64-5717-4562-b3fc-2c963f66afa6")
             }
         }
     }
